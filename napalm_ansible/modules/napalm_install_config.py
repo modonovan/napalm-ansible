@@ -194,7 +194,6 @@ def main():
             config=dict(type="str", required=False),
             dev_os=dict(type="str", required=False),
             commit_changes=dict(type="bool", required=True),
-            commit_comment=dict(type="str", required=False),
             replace_config=dict(type="bool", required=False, default=False),
             diff_file=dict(type="str", required=False, default=None),
             get_diffs=dict(type="bool", required=False, default=True),
@@ -239,7 +238,6 @@ def main():
     config_file = module.params["config_file"]
     config = module.params["config"]
     commit_changes = module.params["commit_changes"]
-    commit_comment = module.params["commit_comment"] # Adding support to set a commit comment message when commit_changes is True
     replace_config = module.params["replace_config"]
     diff_file = module.params["diff_file"]
     get_diffs = module.params["get_diffs"]
@@ -264,10 +262,6 @@ def main():
     else:
         optional_args = module.params["optional_args"]
 
-    if module.params["commit_comment"] is None:
-        commit_comment = {}
-    else:
-        commit_comment = module.params["commit_comment"]
     try:
         network_driver = get_network_driver(dev_os)
     except ModuleImportError as e:
@@ -280,7 +274,6 @@ def main():
             password=password,
             timeout=timeout,
             optional_args=optional_args,
-            commit_comment=commit_comment,
         )
         device.open()
     except Exception as e:
@@ -331,7 +324,7 @@ def main():
             device.discard_config()
         else:
             if changed:
-                device.commit_config() and device.commit_comment()
+                device.commit_config()
     except Exception as e:
         module.fail_json(msg="cannot install config: " + str(e))
 
