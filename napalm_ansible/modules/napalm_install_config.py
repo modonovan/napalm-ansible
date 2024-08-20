@@ -243,6 +243,7 @@ def main():
     get_diffs = module.params["get_diffs"]
     archive_file = module.params["archive_file"]
     candidate_file = module.params["candidate_file"]
+    message = module.params["commit_comment"]
     if config_file:
         config_file = os.path.expanduser(os.path.expandvars(config_file))
     if diff_file:
@@ -324,7 +325,7 @@ def main():
             device.discard_config()
         else:
             if changed:
-                device.commit_config()
+                device.commit_config(message("commit_comment"))
     except Exception as e:
         module.fail_json(msg="cannot install config: " + str(e))
 
